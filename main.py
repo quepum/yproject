@@ -23,7 +23,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
         self.word = ''
         self.best_wpm = 0
         self.best_accuracy = 0
-        self.flag = False
         self.word = self.get_sentence()
         self.setWindowIcon(QtGui.QIcon('keyboard.png'))
         self.btn_re.setIcon(QtGui.QIcon('icon (1) (1).png'))
@@ -72,15 +71,11 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             except Exception:
                 pass
         self.accuracy = cnt / len(self.word) * 100
-        if self.total_time < 1600000000:
-            self.wpm = (len(self.input_text) / 5) / (self.total_time / 60)
-            self.label_2.setText(f'Time: {int(self.total_time)}s')
-            self.label_3.setText(f'Wpm: {round(self.wpm, 1)}')
-            self.label_4.setText(f'Accuracy: {round(self.accuracy, 1)}%')
-            if self.flag is True:
-                self.best()
-        else:
-            pass
+        self.wpm = (len(self.input_text) / 5) / (self.total_time / 60)
+        self.label_2.setText(f'Time: {int(self.total_time)}s')
+        self.label_3.setText(f'Wpm: {round(self.wpm, 1)}')
+        self.label_4.setText(f'Accuracy: {round(self.accuracy, 1)}%')
+        self.best()
 
     def reset_game(self):
         """
@@ -153,7 +148,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
             self.best_accuracy = self.b_res[1]
             QtWidgets.QMessageBox.about(self, 'Оповещение', f'Вы успешно вошли в систему\nBest wpm: {self.best_wpm}\n'
                                                             f'Best accuracy: {self.best_accuracy}%')
-            self.flag = True
             self.best()
         else:
             QtWidgets.QMessageBox.about(self, 'Оповещение', 'Такой пользователь не зарегистрирован')
@@ -173,13 +167,12 @@ class MyWidget(QMainWindow, Ui_MainWindow):
                 self.sql.execute(f"""SELECT login, password FROM users WHERE login = '{self.user_login}'""")
             except Exception:
                 pass
-            if len(self.sql.fetchone()) == 0:
-                print('no')
-                self.sql.execute(f"""INSERT INTO users VALUES (?, ?, ?, ?)""", (self.user_login, self.user_password,
+            if not self.sql.fetchone():
+                self.sql.execute(f"""INSERT INTO users 
+                                 VALUES (?, ?, ?, ?)""", (self.user_login, self.user_password,
                                                                                 0, 0))
                 self.db.commit()
                 QtWidgets.QMessageBox.about(self, 'Оповещение', 'Вы успешно зарегистрированы')
-                self.flag = True
 
             else:
                 QtWidgets.QMessageBox.about(self, 'Оповещение', 'Такой пользователь уже зарегистрирован')
