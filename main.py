@@ -2,7 +2,7 @@ import sys
 import time
 import random
 import sqlite3
-from PyQt5 import uic, QtGui, QtCore, QtWidgets
+from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 from yproject2 import Ui_MainWindow
 
@@ -11,7 +11,6 @@ class MyWidget(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        uic.loadUi('ялпроект2.ui', self)
 
         QtWidgets.QMessageBox.about(self,
                                     'Оповещение', 'Для начала тестирования кликните левой кнопкой мыши вне сроки ввода')
